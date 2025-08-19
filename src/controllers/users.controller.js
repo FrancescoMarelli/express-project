@@ -1,68 +1,54 @@
-const User = require('../models/user.model');
+const userService = require('../services/users.service');
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await userService.getAllUsers();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching users' });
+    next(error); // Go to the error handler middleware
   }
 };
 
-
-const createUser = async (req, res) => {
-    try {
-        const newUser = new User({
-            name: req.body.name
-        });
-        await newUser. save()
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(500).json({ error: 'Error creating user' });
-    }
+const getUserById = async (req, res, next) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getUserById = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.json(user);
+    const newUser = await userService.createUser(req.body);
+    res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching user' });
+    next(error);
   }
-}
+};
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.json(user);
+    const updated = await userService.updateUser(req.params.id, req.body);
+    res.json(updated);
   } catch (error) {
-    res.status(500).json({ error: 'Error updating user' });
+    next(error);
   }
-}
+};
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    await userService.deleteUser(req.params.id);
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting user' });
+    next(error);
   }
-}
-
+};
 
 module.exports = {
   getAllUsers,
-  createUser,
   getUserById,
+  createUser,
   updateUser,
   deleteUser
 };
