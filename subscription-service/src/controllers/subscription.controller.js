@@ -1,24 +1,24 @@
 const subscriptionService = require('../services/subscription.service');
 
-const createSubscription = async (req, res) => {
+const createSubscription = async (req, res, next) => {
   try {
     const subscription = await subscriptionService.createSubscription(req.body);
     res.status(201).json(subscription);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);    
   }
 };
 
-const getSubscriptions = async (req, res) => {
+const getSubscriptions = async (req, res, next) => {
   try {
     const subscriptions = await subscriptionService.getAllSubscriptions();
     res.status(200).json(subscriptions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-const getSubscriptionById = async (req, res) => {
+const getSubscriptionById = async (req, res, next) => {
   try {
     const subscription = await subscriptionService.getSubscriptionById(req.params.id);
     if (!subscription) {
@@ -26,11 +26,10 @@ const getSubscriptionById = async (req, res) => {
     }
     res.status(200).json(subscription);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    next(error);  }
 };
 
-const updateSubscription = async (req, res) => {
+const updateSubscription = async (req, res, next) => {
   try {
     const subscription = await subscriptionService.updateSubscription(req.params.id, req.body);
     if (!subscription) {
@@ -38,11 +37,10 @@ const updateSubscription = async (req, res) => {
     }
     res.status(200).json(subscription);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    next(error);  }
 };
 
-const deleteSubscription = async (req, res) => {
+const deleteSubscription = async (req, res, next) => {
   try {
     const subscription = await subscriptionService.deleteSubscription(req.params.id);
     if (!subscription) {
@@ -50,8 +48,7 @@ const deleteSubscription = async (req, res) => {
     }
     res.status(200).json({ message: 'Subscription deleted' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    next(error);  }
 };
 
 module.exports = {
