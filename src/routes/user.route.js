@@ -4,22 +4,32 @@ const usersController = require('../controllers/users.controller');
 
 /**
  * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management and retrieval
+ * definitions:
+ *   User:
+ *     type: object
+ *     properties:
+ *       name:
+ *         type: string
+ *       email:
+ *         type: string
+ *       password:
+ *         type: string
+ *
  * /users/new:
  *   post:
  *     summary: Create a new user
+ *     tags: [Users]
  *     consumes:
  *      - application/json
- *     parameters:
- *       - in: body
- *         name: user
- *         description: The user to create.
- *         schema:
- *           type: object
- *           required:
- *             - name
- *           properties:
- *             name:
- *               type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/definitions/User'
  *     responses:
  *       201:
  *         description: The created user.
@@ -38,6 +48,7 @@ router.post('/new', usersController.createUser);
  * @swagger
  * /users/{id}:
  *  get:
+ *     tags: [Users]
  *     summary: Get a user by ID
  *     produces:
  *      - application/json
@@ -66,6 +77,7 @@ router.get('/:id', usersController.getUserById);
  * @swagger
  * /users:
  *   get:
+ *     tags: [Users]
  *     summary: Get all users
  *     produces:
  *       - application/json
@@ -80,7 +92,7 @@ router.get('/:id', usersController.getUserById);
  *                 User:
  *                  id : string
  *                  name: string
-  *       404:
+ *       404:
  *         description: No users found.
  *       500:
  *         description: Server error
@@ -90,36 +102,33 @@ router.get('/', usersController.getAllUsers);
 /**
  * @swagger
  * /users/{id}:
- *  put:
- *     summary: Update a user by ID
- *     consumes:
- *      - application/json
+ *   put:
+ *     summary: Update the User by the id
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
- *         description: ID of the user to update.
  *         schema:
  *           type: string
- *       - in: body
- *         name: user
- *         description: The user data to update.
- *         schema:
- *           type: object
- *           properties:
- *             name:
- *               type: string
+ *         required: true
+ *         description: The User id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/definitions/User'
  *     responses:
  *       200:
- *         description: The updated user.
- *         schema:
- *           $ref: '#/definitions/User'
- *       400:
- *         description: Bad request.
+ *         description: The user was updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/User'
  *       404:
- *         description: User not found.
+ *         description: The user was not found
  *       500:
- *         description: Server error.
+ *         description: Some error happened
  */
 router.put('/:id', usersController.updateUser);
 
@@ -127,6 +136,7 @@ router.put('/:id', usersController.updateUser);
  * @swagger
  * /users/{id}:
  *   delete:
+ *     tags: [Users]
  *     summary: Delete a user by ID
  *     parameters:
  *       - in: path
